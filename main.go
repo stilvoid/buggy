@@ -18,7 +18,7 @@ func parseObj(in interface{}, out map[string]interface{}, prefix string) {
         }
     case string:
         out[prefix[1:]] = vv
-    case int:
+    case float64:
         out[prefix[1:]] = vv
     case bool:
         out[prefix[1:]] = vv
