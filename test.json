@@ -1,0 +1,18 @@
+{
+    "a string": "This is a string",
+    "a number": 42,
+    "an array": [
+        "first",
+        "second",
+        "third"
+    ],
+    "an object": {
+        "top": 1,
+        "middle": true,
+        "bottom": [
+            "left",
+            "centre",
+            "right"
+        ]
+    }
+}
