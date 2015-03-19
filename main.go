@@ -25,7 +25,7 @@ func parseObj(in interface{}, out map[string]interface{}, prefix string) {
     case nil:
         // Do nothing!
     default:
-        fmt.Fprintln(os.Stderr, "Input appears to be invalid json")
+        fmt.Fprintln(os.Stderr, "Input appears to be invalid json", vv)
         os.Exit(1)
     }
 }
