@@ -18,5 +18,5 @@
         ]
     },
     "something longer": "This string has \"quotes\"\nand newlines.\n\nIt's also got...\ttabs!",
-    "A dastardly\nmulti-line key with\ttabs and \"quotes\"": false
+    "A dastardly\nmulti-line key with\ttabs and \"quotes\"": "You've got it :)"
 }
