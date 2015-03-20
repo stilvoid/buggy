@@ -1,6 +1,6 @@
 # Buggy
 
-> A bash-friendly JSON parser
+A bash-friendly JSON parser
 
 ## About
 
@@ -10,8 +10,8 @@ For example, the following JSON:
 
     {
         "hello": [
-            "world": {
-                "planet": "earth"
+            {
+                "world": "earth"
             },
             "everything"
         ]
@@ -19,8 +19,8 @@ For example, the following JSON:
 
 Is converted into a set of key-value pairs with the following keys:
 
-* hello.world.planet
-* hello.everything
+* hello.0.world
+* hello.1
 
 ## Usage
 
@@ -30,7 +30,7 @@ To output a list of the keys:
 
 Or to get a specific value:
 
-    cat test.json | buggy "hello.world.planet"
+    cat test.json | buggy "hello.0.world"
 
 Or you can output the keys and values together (this could be tricky to parse depending on the data):
 
