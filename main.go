@@ -4,7 +4,10 @@ import (
     "encoding/json"
     "fmt"
     "os"
+    "strings"
 )
+
+var replacer *strings.Replacer
 
 func parseObj(in interface{}, out map[string]interface{}, prefix string) {
     switch vv := in.(type) {
@@ -34,6 +37,8 @@ func main() {
     var in interface{}
     out := make(map[string]interface{})
 
+    replacer := strings.NewReplacer("\\", "\\\\", "'", "\\'", "\n", "\\n", "\t", "\\t")
+
     json.NewDecoder(os.Stdin).Decode(&in)
 
     parseObj(in, out, "")
@@ -53,17 +58,15 @@ func main() {
         }
     } else {
         for key, value := range out {
-            fmt.Printf("%s=", key)
+            fmt.Printf("%s=", replacer.Replace(key))
 
             switch vv := value.(type) {
-            case string:
-                fmt.Printf("\"%s\"\n", vv)
-            case float64:
-                fmt.Println(vv)
-            case bool:
-                fmt.Println(vv)
             case nil:
                 fmt.Println()
+            case string:
+                fmt.Printf("$'%s'\n", replacer.Replace(vv))
+            default:
+                fmt.Println(vv)
             }
         }
     }
