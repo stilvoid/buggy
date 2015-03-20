@@ -32,12 +32,9 @@ func parseObj(in interface{}, out map[string]interface{}, prefix string) {
 
 func main() {
     var in interface{}
-
     out := make(map[string]interface{})
 
-    dec := json.NewDecoder(os.Stdin)
-
-    dec.Decode(&in)
+    json.NewDecoder(os.Stdin).Decode(&in)
 
     parseObj(in, out, "")
 
