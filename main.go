@@ -77,7 +77,7 @@ func main() {
                 case nil:
                     fmt.Println()
                 case string:
-                    fmt.Printf("$'%s'\n", replacer.Replace(vv))
+                    fmt.Printf("%s\n", replacer.Replace(vv))
                 default:
                     fmt.Println(vv)
                 }
