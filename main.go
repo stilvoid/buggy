@@ -8,13 +8,16 @@ import (
     "strings"
 )
 
-var replacer *strings.Replacer
+var replacer *strings.Replacer = strings.NewReplacer("\\", "\\\\", "'", "\\'", "\n", "\\n", "\t", "\\t")
 
-func apply(out map[string]interface{}, prefix string, value interface{}) {
-    out[replacer.Replace(prefix[1:])] = value
+// TODO: Make a map struct and turn this into a method
+func apply(value interface{}, out map[string]string, prefix string) {
+    key := replacer.Replace(prefix[1:])
+
+    out[key] = fmt.Sprint(value)
 }
 
-func parseObj(in interface{}, out map[string]interface{}, prefix string) {
+func parseObj(in interface{}, out map[string]string, prefix string) {
     switch vv := in.(type) {
     case map[string]interface{}:
         for key, value := range vv {
@@ -24,64 +27,58 @@ func parseObj(in interface{}, out map[string]interface{}, prefix string) {
         for index, value := range vv {
             parseObj(value, out, fmt.Sprintf("%s.%d", prefix, index))
         }
-    case string:
-        apply(out, prefix, vv)
-    case float64:
-        apply(out, prefix, vv)
-    case bool:
-        apply(out, prefix, vv)
+    case string, float64, bool:
+        apply(vv, out, prefix)
     case nil:
-        apply(out, prefix, vv)
+        apply("", out, prefix)
     default:
         fmt.Fprintln(os.Stderr, "Input appears to be invalid json", vv)
         os.Exit(1)
     }
 }
 
+// TODO: Tests
+func printMap(obj map[string]string, output_values bool) {
+    for key, value := range obj {
+        if output_values {
+            fmt.Printf("%s=%s\n", key, replacer.Replace(value))
+        } else {
+            fmt.Println(key)
+        }
+    }
+}
+
+// TODO: Tests
+func printValue(obj map[string]string, key string) {
+    if value, ok := obj[key]; ok {
+        fmt.Println(value)
+    } else {
+        fmt.Fprintf(os.Stderr, "'%s' is not present\n", key)
+        os.Exit(1)
+    }
+}
+
+// TODO: Tests
 func main() {
     var in interface{}
-    out := make(map[string]interface{})
+    out := make(map[string]string)
 
     output_values := flag.Bool("values", false, "Output values (the default is just to output the keys)")
     flag.Parse()
 
     json.NewDecoder(os.Stdin).Decode(&in)
 
-    replacer = strings.NewReplacer("\\", "\\\\", "'", "\\'", "\n", "\\n", "\t", "\\t")
+    if in == nil {
+        fmt.Fprintln(os.Stderr, "Input appears to be invalid json")
+        os.Exit(1)
+    }
 
     parseObj(in, out, "")
 
     if flag.NArg() >= 1 {
-        key := flag.Arg(0)
-
-        if value, ok := out[key]; ok {
-            if value == nil {
-                fmt.Println()
-            } else {
-                fmt.Println(value)
-            }
-        } else {
-            fmt.Fprintf(os.Stderr, "'%s' is not present\n", key)
-            os.Exit(1)
-        }
+        // TODO: all the args
+        printValue(out, flag.Arg(0))
     } else {
-        for key, value := range out {
-            fmt.Print(key)
-
-            if !*output_values {
-                fmt.Println()
-            } else {
-                fmt.Print("=")
-
-                switch vv := value.(type) {
-                case nil:
-                    fmt.Println()
-                case string:
-                    fmt.Printf("%s\n", replacer.Replace(vv))
-                default:
-                    fmt.Println(vv)
-                }
-            }
-        }
+        printMap(out, *output_values)
     }
 }
