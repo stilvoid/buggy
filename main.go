@@ -23,7 +23,7 @@ func parseObj(in interface{}, out map[string]interface{}, prefix string) {
     case bool:
         out[prefix[1:]] = vv
     case nil:
-        // Do nothing!
+        out[prefix[1:]] = vv
     default:
         fmt.Fprintln(os.Stderr, "Input appears to be invalid json", vv)
         os.Exit(1)
@@ -45,11 +45,29 @@ func main() {
         key := os.Args[1]
 
         if value, ok := out[key]; ok {
-            fmt.Println(value)
+            if value == nil {
+                fmt.Println()
+            } else {
+                fmt.Println(value)
+            }
+        } else {
+            fmt.Fprintf(os.Stderr, "'%s' is not present\n", key)
+            os.Exit(1)
         }
     } else {
         for key, value := range out {
-            fmt.Printf("%s=%v\n", key, value)
+            fmt.Printf("%s=", key)
+
+            switch vv := value.(type) {
+            case string:
+                fmt.Printf("\"%s\"\n", vv)
+            case float64:
+                fmt.Println(vv)
+            case bool:
+                fmt.Println(vv)
+            case nil:
+                fmt.Println()
+            }
         }
     }
 }

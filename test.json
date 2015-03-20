@@ -1,6 +1,8 @@
 {
     "a string": "This is a string",
     "a number": 42,
+    "a null": null,
+    "an empty string": "",
     "an array": [
         "first",
         "second",
